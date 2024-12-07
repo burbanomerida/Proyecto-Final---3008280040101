@@ -218,3 +218,186 @@ escenario4c <- data.frame(PUEHOM = 1, PUEMUJ = 4, ESCHOM = 4, ESCMUJ = 2, EDADHO
 pred4c <- predict(arbol4, escenario4c, type = "class")
 print(pred4c)
 print(as.character(pred4c))
+
+
+
+#4. Predicción por medio de bosques aleatorios
+
+#a.)
+
+#4.1 Selección de columnas relevantes
+combined_df2a <- combined_df2[, c("MESOCU","AÑOOCU","DEPOCU","EDADHOM", "EDADMUJ", "ESCHOM", "ESCMUJ")]
+
+# Convertir columnas categóricas en factores
+combined_df2a$MESOCU <- as.factor(combined_df2a$MESOCU)
+combined_df2a$DEPOCU <- as.factor(combined_df2a$DEPOCU)
+combined_df2a$ESCMUJ <- as.factor(combined_df2a$ESCMUJ)
+combined_df2a$ESCHOM <- as.factor(combined_df2a$ESCHOM)
+
+#4.2 Aleatorización de los datos
+set.seed(100)
+combined_df2a <- combined_df2a[sample(1:nrow(combined_df2a)),]
+
+#4.3 División de los datos en entrenamiento y prueba
+index <- sample(1:nrow(combined_df2a), 0.8*nrow(combined_df2a))
+train <- combined_df2a[index,]
+test <- combined_df2a[-index,]
+
+#4.4 Entrenamiento del modelo Random Forest
+bosque <- randomForest(ESCHOM ~ MESOCU + DEPOCU + EDADHOM + EDADMUJ + ESCMUJ,
+                       data = train,
+                       ntree = 10,
+                       mtry = 4)
+
+#4.5 Predicción con el modelo
+entreno <- predict(bosque, test)
+entreno
+
+#4.6 Predicción para un nuevo dato
+
+
+# Crear un nuevo dato asegurando que los niveles de los factores coincidan
+dato_nuevo <- data.frame(
+  MESOCU = factor(5, levels = levels(train$MESOCU)),
+  DEPOCU = factor(1, levels = levels(train$DEPOCU)),
+  EDADHOM = 25,
+  EDADMUJ = 22,
+  ESCMUJ = factor(3, levels = levels(train$ESCMUJ))
+)
+
+#Realizar la predicción
+prediccion <- predict(bosque, dato_nuevo)
+print(prediccion)
+
+#------------------------------------------------------------------------
+
+# Crear un nuevo dato asegurando que los niveles de los factores coincidan
+dato_nuevo1 <- data.frame(
+  MESOCU = factor(1, levels = levels(train$MESOCU)),
+  DEPOCU = factor(2, levels = levels(train$DEPOCU)),
+  EDADHOM = 43,
+  EDADMUJ = 51,
+  ESCMUJ = factor(2, levels = levels(train$ESCMUJ))
+)
+
+#Realizar la predicción
+prediccion1 <- predict(bosque, dato_nuevo1)
+print(prediccion1)
+
+#------------------------------------------------------------------------
+
+# Crear un nuevo dato asegurando que los niveles de los factores coincidan
+dato_nuevo2 <- data.frame(
+  MESOCU = factor(12, levels = levels(train$MESOCU)),
+  DEPOCU = factor(6, levels = levels(train$DEPOCU)),
+  EDADHOM = 31,
+  EDADMUJ = 25,
+  ESCMUJ = factor(4, levels = levels(train$ESCMUJ))
+)
+
+#Realizar la predicción
+prediccion2 <- predict(bosque, dato_nuevo2)
+print(prediccion2)
+
+#------------------------------------------------------------------------
+
+# Crear un nuevo dato asegurando que los niveles de los factores coincidan
+dato_nuevo3 <- data.frame(
+  MESOCU = factor(6, levels = levels(train$MESOCU)),
+  DEPOCU = factor(1, levels = levels(train$DEPOCU)),
+  EDADHOM = 51,
+  EDADMUJ = 21,
+  ESCMUJ = factor(1, levels = levels(train$ESCMUJ))
+)
+
+#Realizar la predicción
+prediccion3 <- predict(bosque, dato_nuevo3)
+print(prediccion3)
+
+
+
+#b.)
+
+#4.1 Selección de columnas relevantes
+combined_df2b <- combined_df2[, c("DEPOCU","EDADHOM", "EDADMUJ", "ESCHOM", "ESCMUJ")]
+
+# Convertir columnas categóricas en factores
+combined_df2b$DEPOCU <- as.factor(combined_df2b$DEPOCU)
+combined_df2b$ESCMUJ <- as.factor(combined_df2b$ESCMUJ)
+combined_df2b$ESCHOM <- as.factor(combined_df2b$ESCHOM)
+
+#4.2 Aleatorización de los datos
+set.seed(100)
+combined_df2b <- combined_df2b[sample(1:nrow(combined_df2b)),]
+
+#4.3 División de los datos en entrenamiento y prueba
+index <- sample(1:nrow(combined_df2b), 0.8*nrow(combined_df2b))
+train <- combined_df2b[index,]
+test <- combined_df2b[-index,]
+
+#4.4 Entrenamiento del modelo Random Forest
+bosqueb <- randomForest(EDADHOM ~ DEPOCU + ESCHOM + EDADMUJ + ESCMUJ,
+                        data = train,
+                        ntree = 25,
+                        mtry = 4)
+
+#4.5 Predicción con el modelo
+entrenob <- predict(bosqueb, test)
+entrenob
+
+#4.6 Predicción para un nuevo dato
+
+
+# Crear un nuevo dato asegurando que los niveles de los factores coincidan
+dato_nuevob <- data.frame(
+  DEPOCU = factor(1, levels = levels(train$DEPOCU)),
+  ESCHOM = factor(4, levels = levels(train$ESCMUJ)),
+  EDADMUJ = 22,
+  ESCMUJ = factor(3, levels = levels(train$ESCMUJ))
+)
+
+#Realizar la predicción
+prediccionb <- predict(bosqueb, dato_nuevob)
+print(prediccionb)
+
+#------------------------------------------------------------------------
+
+# Crear un nuevo dato asegurando que los niveles de los factores coincidan
+dato_nuevo1b <- data.frame(
+  DEPOCU = factor(1, levels = levels(train$DEPOCU)),
+  ESCHOM = factor(5, levels = levels(train$ESCMUJ)),
+  EDADMUJ = 19,
+  ESCMUJ = factor(3, levels = levels(train$ESCMUJ))
+)
+
+#Realizar la predicción
+prediccion1b <- predict(bosqueb, dato_nuevo1b)
+print(prediccion1b)
+
+#------------------------------------------------------------------------
+
+# Crear un nuevo dato asegurando que los niveles de los factores coincidan
+dato_nuevo2b <- data.frame(
+  DEPOCU = factor(1, levels = levels(train$DEPOCU)),
+  ESCHOM = factor(2, levels = levels(train$ESCMUJ)),
+  EDADMUJ = 25,
+  ESCMUJ = factor(3, levels = levels(train$ESCMUJ))
+)
+
+#Realizar la predicción
+prediccion2b <- predict(bosqueb, dato_nuevo2b)
+print(prediccion2b)
+
+#------------------------------------------------------------------------
+
+# Crear un nuevo dato asegurando que los niveles de los factores coincidan
+dato_nuevo3b <- data.frame(
+  DEPOCU = factor(1, levels = levels(train$DEPOCU)),
+  ESCHOM = factor(1, levels = levels(train$ESCMUJ)),
+  EDADMUJ = 32,
+  ESCMUJ = factor(1, levels = levels(train$ESCMUJ))
+)
+
+#Realizar la predicción
+prediccion3b <- predict(bosqueb, dato_nuevo3b)
+print(prediccion3b)
